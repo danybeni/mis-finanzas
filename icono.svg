@@ -1,15 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF5A78"/><stop offset=".55" stop-color="#FF3B5C"/><stop offset="1" stop-color="#C81E4A"/></linearGradient>
-    <radialGradient id="h" cx=".25" cy=".15" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1C2030"/><stop offset="1" stop-color="#090A0F"/></linearGradient>
+    <linearGradient id="b1" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#C81E4A"/><stop offset="1" stop-color="#FF5A78"/></linearGradient>
   </defs>
-  <rect width="1024" height="1024" fill="url(#g)"/>
-  <rect width="1024" height="1024" fill="url(#h)"/>
-  <!-- billetera -->
-  <rect x="222" y="300" width="580" height="430" rx="86" fill="#fff"/>
-  <path d="M262 318 L640 214 a40 40 0 0 1 50 38 L690 300 Z" fill="#fff" opacity=".75"/>
-  <rect x="560" y="440" width="242" height="150" rx="60" fill="#FFE1E7"/>
-  <circle cx="636" cy="515" r="30" fill="#FF3B5C"/>
-  <!-- pulso -->
-  <path d="M262 520 H372 L408 448 L452 592 L494 500 L520 520 H548" fill="none" stroke="#FF3B5C" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect x="236" y="560" width="120" height="220" rx="36" fill="#2C3346"/>
+  <rect x="398" y="460" width="120" height="320" rx="36" fill="#3A4259"/>
+  <rect x="560" y="340" width="120" height="440" rx="36" fill="url(#b1)"/>
+  <rect x="722" y="250" width="120" height="530" rx="36" fill="#00D09C"/>
+  <path d="M250 470 L440 360 L600 250 L790 160" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+  <circle cx="790" cy="160" r="34" fill="#fff"/>
 </svg>
