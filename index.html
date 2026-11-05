@@ -1318,6 +1318,16 @@ body { overscroll-behavior-y: contain; }
   .pgrid { margin: 0; gap: 6px; }
   .ptile { border-radius: 12px; }
 }
+
+/* Datos integrados sobre el arte original de cada tarjeta. */
+.tcard.tcard--art { position: relative; padding: 0; gap: 0; min-height: 0; aspect-ratio: 700 / 453; overflow: hidden; background: #191919; border-radius: 22px; }
+.tcard--art .tcard__art { display: block; width: 100%; height: 100%; object-fit: fill; }
+.tcard--art .tcard__details { position: absolute; inset: 44% 7% 10%; display: flex; flex-direction: column; align-items: flex-start; text-align: left; color: #fff; text-shadow: 0 1px 5px #000; }
+.tcard--art .tcard__code { font-size: 15px; font-weight: 500; letter-spacing: .12em; color: #e6e6e6; white-space: nowrap; }
+.tcard--art .tcard__payment { margin-top: 10px; font-size: 10px; font-weight: 500; letter-spacing: .04em; color: #d0d0d0; }
+.tcard--art .tcard__value { margin-top: 3px; font-size: 27px; line-height: 1.15; font-weight: 650; letter-spacing: -.035em; color: #fff; max-width: 73%; }
+.tcard--art:focus-visible { outline: 2px solid #a7f3d0; outline-offset: 4px; }
+
 </style>
 
 </head>
@@ -1798,6 +1808,7 @@ function tarjetaCuenta(c, gastado, totalGastos) {
   const p = lim > 0 ? gastado / lim : (totalGastos > 0 ? gastado / totalGastos : 0);
   const derecha = lim > 0 ? `Límite: ${money0(lim)}` : `${Math.round(p * 100)}% del gasto`;
   const efectivo = c.tipo === 'Efectivo';
+  const arte = !efectivo && ({ 'Visa': 'visa', 'Mastercard': 'mastercard', 'Diners Club': 'diners' })[marcaDe(c)];
   const disponible = lim > 0 ? lim - gastado : null;
   const [ay, am] = S.month.split('-').map(Number);
   const mesTxt = MES_C[am - 1];
@@ -1806,24 +1817,35 @@ function tarjetaCuenta(c, gastado, totalGastos) {
   const numero = efectivo ? 'Dinero en efectivo'
     : c.ultimos4 ? `${esc(c.primeros4 || '****')}${'*'.repeat(ocultos)}${esc(c.ultimos4)}` : esc(c.tipo);
   // Fecha de pago: el próximo día de pago a partir de hoy
+  let fechaPago = 'Sin definir';
   let etiqueta = c.tipo === 'Crédito' ? `Gastado en ${mesTxt}` : `Consumos de ${mesTxt}`;
   if (c.tipo === 'Crédito' && c.diaPago) {
     const h = new Date(), dia = Number(c.diaPago);
     let f = new Date(h.getFullYear(), h.getMonth(), dia);
     if (f < new Date(h.getFullYear(), h.getMonth(), h.getDate())) f = new Date(h.getFullYear(), h.getMonth() + 1, dia);
+    fechaPago = `${pad(f.getDate())} ${MES_C[f.getMonth()]}`;
     etiqueta += ` · paga hasta ${pad(f.getDate())} ${MES_C[f.getMonth()]}`;
   }
-  return `<button class="ccard tcard ccard--${esc(c.color || 'emerald')} ${sel ? 'is-selected' : ''} ${dim ? 'is-dimmed' : ''}" data-act="filtro-cuenta" data-id="${esc(c.id)}"
+  if (arte) return `<button class="ccard tcard tcard--art ${sel ? 'is-selected' : ''} ${dim ? 'is-dimmed' : ''}" data-act="filtro-cuenta" data-id="${esc(c.id)}" aria-pressed="${sel}" aria-label="${esc(c.nombre)}, ${numero}, fecha de pago ${fechaPago}, valor ${money(gastado)}">
+    <img class="tcard__art" src="assets/tarjetas/${arte}.png" alt="" decoding="async">
+    <span class="tcard__details">
+      <span class="tcard__code num">${numero}</span>
+      <span class="tcard__payment">Fecha de pago · ${fechaPago}</span>
+      <b class="tcard__value num">${money(gastado)}</b>
+    </span>
+  </button>`;
+  return `<button class="ccard tcard ${arte ? 'tcard--art' : ''} ccard--${esc(c.color || 'emerald')} ${sel ? 'is-selected' : ''} ${dim ? 'is-dimmed' : ''}" data-act="filtro-cuenta" data-id="${esc(c.id)}"
       aria-label="${esc(c.nombre)}${c.ultimos4 ? ' terminada en ' + esc(c.ultimos4) : ''}: ${c.tipo === 'Crédito' ? 'gastado' : 'consumos'} ${money(gastado)}${lim > 0 ? ' de ' + money0(lim) : ''}">
-    <span class="ccard__shine"></span><span class="ccard__tex"></span>
+    ${arte ? `<img class="tcard__art" src="assets/tarjetas/${arte}.png" alt="${esc(marcaDe(c))}" decoding="async"><span class="tcard__details">` : '<span class="ccard__shine"></span><span class="ccard__tex"></span>'}
     <span class="tcard__top"><b class="tcard__name">${esc(c.nombre)}</b>${sel ? '<span class="ccard__badge">ACTIVA</span>' : ''}</span>
     <span class="tcard__num num">${numero}</span>
     <span class="tcard__bottom">
       <span class="tcard__amt"><small>${etiqueta}</small><b class="num">${money(gastado)}</b>
         ${lim > 0 ? `<em>Límite ${money0(lim)} · ${disponible >= 0 ? 'disponible ' + money0(disponible) : 'excedido'}</em>` : `<em>${derecha}</em>`}</span>
-      <span class="tcard__logo">${efectivo ? `<span class="ms">${iconoCuenta(c)}</span>` : logoCuenta(c, 'lg')}</span>
+      <span class="tcard__logo">${arte ? '' : efectivo ? `<span class="ms">${iconoCuenta(c)}</span>` : logoCuenta(c, 'lg')}</span>
     </span>
     ${lim > 0 ? `<span class="bar"><i data-w="${Math.min(100, p * 100).toFixed(1)}%"></i></span>` : ''}
+    ${arte ? '</span>' : ''}
   </button>`;
 }
 
